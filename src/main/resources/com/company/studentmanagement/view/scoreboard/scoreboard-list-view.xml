@@ -22,35 +22,33 @@
     </data>
     <facets>
         <dataLoadCoordinator auto="true"/>
-        <urlQueryParameters>
-            <genericFilter component="genericFilter"/>
-        </urlQueryParameters>
     </facets>
     <actions>
         <action id="selectAction" type="lookup_select"/>
         <action id="discardAction" type="lookup_discard"/>
     </actions>
     <layout>
-        <genericFilter id="genericFilter"
-                       dataLoader="scoreboardsDl">
-            <properties include=".*"/>
-        </genericFilter>
+        <simplePagination classNames="self-center"
+                          itemsPerPageVisible="true"
+                          itemsPerPageItems="5, 10, 15, 50, 100"
+                          itemsPerPageDefaultValue="5"
+                          dataLoader="scoreboardsDl"/>
 
         <dataGrid id="scoreboardsDataGrid"
                   width="100%"
                   minHeight="20em"
                   dataContainer="scoreboardsDc"
-                  columnReorderingAllowed="true" editorBuffered="true">
+                  columnReorderingAllowed="true">
             <columns resizable="true">
-                <column property="student.inClass.name"/>
+                <column property="student.inClass.name" filterable="true"/>
                 <column property="student" filterable="true"/>
                 <column property="major" filterable="true"/>
                 <column property="mark" editable="true" filterable="true"/>
-                <editorActionsColumn key="bufferedEditorColumn">
-                    <editButton text="Edit" icon="PENCIL"/>
-                    <saveButton icon="CHECK" themeNames="success"/>
-                    <cancelButton icon="CLOSE" themeNames="error"/>
-                </editorActionsColumn>
+<!--                <editorActionsColumn key="bufferedEditorColumn">-->
+<!--                    <editButton text="Edit" icon="PENCIL"/>-->
+<!--                    <saveButton icon="CHECK" themeNames="success"/>-->
+<!--                    <cancelButton icon="CLOSE" themeNames="error"/>-->
+<!--                </editorActionsColumn>-->
             </columns>
 
         </dataGrid>
