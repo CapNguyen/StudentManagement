@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd"
+        objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
+    <changeSet id="1" author="StudentManagement">
+        <createIndex indexName="IDX_LECTURER_MAJOR" tableName="LECTURER">
+            <column name="MAJOR_ID"/>
+        </createIndex>
+
+        <addForeignKeyConstraint baseColumnNames="MAJOR_ID" baseTableName="LECTURER"
+                                 constraintName="FK_LECTURER_ON_MAJOR" referencedColumnNames="ID"
+                                 referencedTableName="MAJOR"/>
+    </changeSet>
+    <changeSet id="2" author="StudentManagement">
+        <dropColumn columnName="SUBJECT_ID" tableName="LECTURER"/>
+    </changeSet>
+</databaseChangeLog>

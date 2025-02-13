@@ -3,6 +3,14 @@
 
     <menu id="application" title="msg://com.company.studentmanagement/menu.application.title" opened="true">
         <item view="User.list" title="msg://com.company.studentmanagement.view.user/UserListView.title"/>
+        <item view="Department.list"
+              title="msg://com.company.studentmanagement.view.department/departmentListView.title"/>
+        <item view="Klass.list" title="msg://com.company.studentmanagement.view.klass/klassListView.title"/>
+        <item view="Lecturer.list" title="msg://com.company.studentmanagement.view.lecturer/lecturerListView.title"/>
+        <item view="Major.list" title="msg://com.company.studentmanagement.view.major/majorListView.title"/>
+        <item view="Student.list" title="msg://com.company.studentmanagement.view.student/studentListView.title"/>
+        <item view="Scoreboard.list"
+              title="msg://com.company.studentmanagement.view.scoreboard/scoreboardListView.title"/>
     </menu>
 
 </menu-config>

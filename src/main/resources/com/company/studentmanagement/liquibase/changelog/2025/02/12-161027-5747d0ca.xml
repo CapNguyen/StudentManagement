@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd"
+        objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
+    <changeSet id="1" author="StudentManagement">
+        <createIndex indexName="IDX_LECTURER_CLASS_KLASS" tableName="LECTURER_CLASS">
+            <column name="KLASS_ID"/>
+        </createIndex>
+
+        <addForeignKeyConstraint baseColumnNames="KLASS_ID" baseTableName="LECTURER_CLASS"
+                                 constraintName="FK_LECTURER_CLASS_ON_KLASS" referencedColumnNames="ID"
+                                 referencedTableName="KLASS"/>
+    </changeSet>
+    <changeSet id="2" author="StudentManagement">
+        <createIndex indexName="IDX_LECTURER_CLASS_LECTURER" tableName="LECTURER_CLASS">
+            <column name="LECTURER_ID"/>
+        </createIndex>
+
+        <addForeignKeyConstraint baseColumnNames="LECTURER_ID" baseTableName="LECTURER_CLASS"
+                                 constraintName="FK_LECTURER_CLASS_ON_LECTURER" referencedColumnNames="ID"
+                                 referencedTableName="LECTURER"/>
+    </changeSet>
+    <changeSet id="3" author="StudentManagement">
+        <createIndex indexName="IDX_STUDENT_IN_CLASS" tableName="STUDENT">
+            <column name="IN_CLASS_ID"/>
+        </createIndex>
+
+        <addForeignKeyConstraint baseColumnNames="IN_CLASS_ID" baseTableName="STUDENT"
+                                 constraintName="FK_STUDENT_ON_IN_CLASS" referencedColumnNames="ID"
+                                 referencedTableName="KLASS"/>
+    </changeSet>
+</databaseChangeLog>

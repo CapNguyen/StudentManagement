@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd"
+        objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
+    <changeSet id="1" author="StudentManagement">
+        <dropForeignKeyConstraint baseTableName="LECTURER" constraintName="FK_LECTURER_ON_CLASS_TEACHING"/>
+    </changeSet>
+    <changeSet id="2" author="StudentManagement">
+        <createTable tableName="LECTURER_CLASS">
+            <column name="ID" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_LECTURER_CLASS"/>
+            </column>
+            <column name="VERSION" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="LECTURER_ID" type="UUID"/>
+            <column name="KLASS_ID" type="UUID"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="3" author="StudentManagement">
+        <createIndex indexName="IDX_LECTURER_CLASS_KLASS" tableName="LECTURER_CLASS">
+            <column name="KLASS_ID"/>
+        </createIndex>
+
+        <addForeignKeyConstraint baseColumnNames="KLASS_ID" baseTableName="LECTURER_CLASS"
+                                 constraintName="FK_LECTURER_CLASS_ON_KLASS" referencedColumnNames="ID"
+                                 referencedTableName="CLASS"/>
+    </changeSet>
+    <changeSet id="4" author="StudentManagement">
+        <createIndex indexName="IDX_LECTURER_CLASS_LECTURER" tableName="LECTURER_CLASS">
+            <column name="LECTURER_ID"/>
+        </createIndex>
+
+        <addForeignKeyConstraint baseColumnNames="LECTURER_ID" baseTableName="LECTURER_CLASS"
+                                 constraintName="FK_LECTURER_CLASS_ON_LECTURER" referencedColumnNames="ID"
+                                 referencedTableName="LECTURER"/>
+    </changeSet>
+    <changeSet id="5" author="StudentManagement">
+        <dropColumn columnName="CLASS_TEACHING_ID" tableName="LECTURER"/>
+    </changeSet>
+</databaseChangeLog>

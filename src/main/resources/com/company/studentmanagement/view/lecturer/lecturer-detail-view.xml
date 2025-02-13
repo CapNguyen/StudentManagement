@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://lecturerDetailView.title"
+      focusComponent="form">
+    <data>
+        <instance id="lecturerDc"
+                  class="com.company.studentmanagement.entity.Lecturer">
+            <fetchPlan extends="_base">
+                <property name="major" fetchPlan="_base"/>
+            </fetchPlan>
+            <loader id="lecturerDl"/>
+        </instance>
+        <collection id="lecturerClassesDc" class="com.company.studentmanagement.entity.LecturerClass">
+            <loader id="lecturerClassesDl" readOnly="true">
+                <query>
+                    <![CDATA[select lc from LecturerClass lc
+                    where lc.lecturer.id = :lid  ]]>
+                </query>
+            </loader>
+            <fetchPlan extends="_base">
+                <property name="lecturer" fetchPlan="_base"/>
+                <property name="klass" fetchPlan="_base"/>
+            </fetchPlan>
+        </collection>
+        <collection id="klassesDc" class="com.company.studentmanagement.entity.Klass">
+            <loader id="klassesDl" readOnly="true">
+                <query>
+                    <![CDATA[select e from Klass e]]>
+                </query>
+            </loader>
+            <fetchPlan extends="_base"/>
+        </collection>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+    <actions>
+        <action id="saveAction" type="detail_saveClose"/>
+        <action id="closeAction" type="detail_close"/>
+    </actions>
+    <layout>
+        <formLayout id="form" dataContainer="lecturerDc">
+            <responsiveSteps>
+                <responsiveStep minWidth="0" columns="1"/>
+                <responsiveStep minWidth="40em" columns="2"/>
+            </responsiveSteps>
+            <textField id="nameField" property="name"/>
+            <entityPicker id="subjectField" property="major">
+                <actions>
+                    <action id="entityLookup" type="entity_lookup"/>
+                    <action id="entityClear" type="entity_clear"/>
+                </actions>
+            </entityPicker>
+            <datePicker id="dobField" property="dob"/>
+            <textField id="phoneField" property="phone"/>
+            <textField id="addressField" property="address"/>
+        </formLayout>
+        <hbox id="buttonsPanel" classNames="buttons-panel">
+            <button id="generateButton" text="Generate"/>
+            <multiSelectComboBox id="classField" itemsContainer="klassesDc"/>
+        </hbox>
+        <dataGrid id="lecturerClassDataGrid" dataContainer="lecturerClassesDc">
+            <columns>
+                <column property="lecturer.name"/>
+                <column property="lecturer.major"/>
+                <column property="klass.name"/>
+            </columns>
+            <actions>
+                <action id="remove" type="list_remove"/>
+            </actions>
+        </dataGrid>
+        <hbox id="detailActions">
+            <button id="saveAndCloseButton" action="saveAction"/>
+            <button id="closeButton" action="closeAction"/>
+        </hbox>
+    </layout>
+</view>
