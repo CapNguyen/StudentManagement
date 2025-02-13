@@ -61,9 +61,9 @@
         </hbox>
         <dataGrid id="lecturerClassDataGrid" dataContainer="lecturerClassesDc">
             <columns>
-                <column property="lecturer.name"/>
-                <column property="lecturer.major"/>
-                <column property="klass.name"/>
+                <column property="lecturer.name" filterable="true"/>
+                <column property="lecturer.major" filterable="true"/>
+                <column property="klass.name" filterable="true"/>
             </columns>
             <actions>
                 <action id="remove" type="list_remove"/>

@@ -43,9 +43,9 @@
                   columnReorderingAllowed="true" editorBuffered="true">
             <columns resizable="true">
                 <column property="student.inClass.name"/>
-                <column property="student"/>
-                <column property="major"/>
-                <column property="mark" editable="true"/>
+                <column property="student" filterable="true"/>
+                <column property="major" filterable="true"/>
+                <column property="mark" editable="true" filterable="true"/>
                 <editorActionsColumn key="bufferedEditorColumn">
                     <editButton text="Edit" icon="PENCIL"/>
                     <saveButton icon="CHECK" themeNames="success"/>

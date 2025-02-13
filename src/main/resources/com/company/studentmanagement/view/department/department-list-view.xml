@@ -47,9 +47,9 @@
                 <action id="remove" type="list_remove"/>
             </actions>
             <columns resizable="true">
-                <column property="code"/>
-                <column property="name"/>
-                <column property="location"/>
+                <column property="code" filterable="true"/>
+                <column property="name" filterable="true"/>
+                <column property="location" filterable="true"/>
             </columns>
         </dataGrid>
         <hbox id="lookupActions" visible="false">
