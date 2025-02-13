@@ -3,6 +3,7 @@ package com.company.studentmanagement.entity;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 
 import java.util.UUID;
 
@@ -21,7 +22,8 @@ public class Scoreboard {
     @Version
     private Integer version;
     @Column(name = "MARK")
-    private Double mark;
+    @Min(value = 0,message = "Mark cannot be negative")
+    private Double mark = 0.0;
     @JoinColumn(name = "STUDENT_ID")
     @ManyToOne(fetch = FetchType.LAZY)
     private Student student;

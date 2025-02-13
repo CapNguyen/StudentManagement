@@ -7,12 +7,15 @@
         <collection id="scoreboardsDc"
                     class="com.company.studentmanagement.entity.Scoreboard">
             <fetchPlan extends="_base">
-                <property name="student" fetchPlan="_base"/>
+                <property name="student" fetchPlan="_base">
+                    <property name="inClass" fetchPlan="_base"/>
+                </property>
                 <property name="major" fetchPlan="_base"/>
             </fetchPlan>
             <loader id="scoreboardsDl" readOnly="true">
                 <query>
-                    <![CDATA[select e from Scoreboard e]]>
+                    <![CDATA[select e from Scoreboard e
+                    order by e.student.inClass.name asc]]>
                 </query>
             </loader>
         </collection>
@@ -21,7 +24,6 @@
         <dataLoadCoordinator auto="true"/>
         <urlQueryParameters>
             <genericFilter component="genericFilter"/>
-            <pagination component="pagination"/>
         </urlQueryParameters>
     </facets>
     <actions>
@@ -33,27 +35,24 @@
                        dataLoader="scoreboardsDl">
             <properties include=".*"/>
         </genericFilter>
-        <hbox id="buttonsPanel" classNames="buttons-panel">
-            <button id="createButton" action="scoreboardsDataGrid.create"/>
-            <button id="editButton" action="scoreboardsDataGrid.edit"/>
-            <button id="removeButton" action="scoreboardsDataGrid.remove"/>
-            <simplePagination id="pagination" dataLoader="scoreboardsDl"/>
-        </hbox>
+
         <dataGrid id="scoreboardsDataGrid"
                   width="100%"
                   minHeight="20em"
                   dataContainer="scoreboardsDc"
-                  columnReorderingAllowed="true">
-            <actions>
-                <action id="create" type="list_create"/>
-                <action id="edit" type="list_edit"/>
-                <action id="remove" type="list_remove"/>
-            </actions>
+                  columnReorderingAllowed="true" editorBuffered="true">
             <columns resizable="true">
-                <column property="mark"/>
+                <column property="student.inClass.name"/>
                 <column property="student"/>
                 <column property="major"/>
+                <column property="mark" editable="true"/>
+                <editorActionsColumn key="bufferedEditorColumn">
+                    <editButton text="Edit" icon="PENCIL"/>
+                    <saveButton icon="CHECK" themeNames="success"/>
+                    <cancelButton icon="CLOSE" themeNames="error"/>
+                </editorActionsColumn>
             </columns>
+
         </dataGrid>
         <hbox id="lookupActions" visible="false">
             <button id="selectButton" action="selectAction"/>
