@@ -29,18 +29,18 @@ public class StudentEventListener {
     @EventListener
     public void onStudentChangedBeforeCommit(EntityChangedEvent<Student> event) {
         if (event.getType() == EntityChangedEvent.Type.DELETED) {
-            var studentId = event.getEntityId().getValue();
-            Student student = dataManager.load(Student.class)
-                    .id(studentId)
-                    .optional()
-                    .orElse(null);
+            var classId = event.getChanges().getOldValue("inClass");
 
-            if (student != null && student.getInClass() != null) {
-                Klass klass = student.getInClass();
-                if (klass.getTotalStudent() != null) {
+            if (classId != null) {
+                Klass klass = dataManager.load(Klass.class)
+                        .id(classId)
+                        .optional()
+                        .orElse(null);
+
+                if (klass != null && klass.getTotalStudent() != null) {
                     klass.setTotalStudent(Math.max(klass.getTotalStudent() - 1, 0));
+                    dataManager.save(klass);
                 }
-                dataManager.save(klass);
             }
         }
     }
