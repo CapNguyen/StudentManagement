@@ -3,6 +3,23 @@
       title="msg://klassDetailView.title"
       focusComponent="form">
     <data>
+        <collection id="studentsDc" class="com.company.studentmanagement.entity.Student">
+            <loader id="studentsDl" readOnly="true">
+                <query>
+                    <![CDATA[select e from Student e
+                    where e.inClass.id = :classId  ]]>
+                </query>
+            </loader>
+            <fetchPlan extends="_base"/>
+        </collection>
+        <collection id="lecturersDc" class="com.company.studentmanagement.entity.LecturerClass">
+            <loader id="lecturersDl" readOnly="true">
+                <query>
+                    <![CDATA[select l from LecturerClass l
+                    where l.klass.id = :classId  ]]>
+                </query>
+            </loader>
+        </collection>
         <instance id="klassDc"
                   class="com.company.studentmanagement.entity.Klass">
             <fetchPlan extends="_base">
@@ -37,5 +54,32 @@
             <button id="saveAndCloseButton" action="saveAction"/>
             <button id="closeButton" action="closeAction"/>
         </hbox>
+        <hbox spacing="true" width="100%">
+            <vbox spacing="true" width="70%">
+                <hbox>
+                    <textField value="Lecturers" readOnly="true"/>
+                    <button id="createLecturerButton" text="Add Lecturer" icon="vaadin:plus"/>
+                </hbox>
+                <dataGrid id="lecturerDataGrid" dataContainer="lecturersDc">
+                    <columns>
+                        <column property="lecturer.name"/>
+                        <column property="lecturer.major"/>
+                    </columns>
+                </dataGrid>
+            </vbox>
+
+            <vbox spacing="true" width="30%">
+                <hbox>
+                    <textField value="Students" readOnly="true"/>
+                    <button id="createStudentButton" text="Add Student" icon="vaadin:plus"/>
+                </hbox>
+                <dataGrid id="studentDataGrid" dataContainer="studentsDc">
+                    <columns>
+                        <column property="name"/>
+                    </columns>
+                </dataGrid>
+            </vbox>
+        </hbox>
+
     </layout>
 </view>
