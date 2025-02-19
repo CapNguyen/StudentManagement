@@ -3,6 +3,33 @@
       title="msg://klassDetailView.title"
       focusComponent="form">
     <data>
+        <collection id="studentsPickerDc" class="com.company.studentmanagement.entity.Student">
+            <loader id="studentsPickerDl" readOnly="true">
+                <query>
+                    <![CDATA[select e from Student e]]>
+                </query>
+            </loader>
+            <fetchPlan extends="_base"/>
+        </collection>
+        <collection id="lecturersPickerDc" class="com.company.studentmanagement.entity.Lecturer">
+            <fetchPlan extends="_base">
+                <property fetchPlan="_base" name="major"/>
+                <property name="lecturerClasses" fetchPlan="_base"/>
+            </fetchPlan>
+            <loader id="lecturersPickerDl" readOnly="true">
+                <query>
+                    <![CDATA[select e from Lecturer e]]>
+                </query>
+            </loader>
+        </collection>
+        <collection id="departmentsDc" class="com.company.studentmanagement.entity.Department">
+            <fetchPlan extends="_base"/>
+            <loader id="departmentsDl" readOnly="true">
+                <query>
+                    <![CDATA[select e from Department e  ]]>
+                </query>
+            </loader>
+        </collection>
         <collection id="studentsDc" class="com.company.studentmanagement.entity.Student">
             <loader id="studentsDl" readOnly="true">
                 <query>
@@ -12,11 +39,13 @@
             </loader>
             <fetchPlan extends="_base"/>
         </collection>
-        <collection id="lecturersDc" class="com.company.studentmanagement.entity.LecturerClass">
+        <collection id="lecturersDc" class="com.company.studentmanagement.entity.Lecturer">
             <loader id="lecturersDl" readOnly="true">
                 <query>
-                    <![CDATA[select l from LecturerClass l
-                    where l.klass.id = :classId  ]]>
+                    <![CDATA[SELECT l FROM Lecturer l
+                            JOIN l.lecturerClasses lc
+                            JOIN lc.klass k
+                            WHERE k.id = :classId]]>
                 </query>
             </loader>
         </collection>
@@ -41,39 +70,58 @@
                 <responsiveStep minWidth="0" columns="1"/>
                 <responsiveStep minWidth="40em" columns="2"/>
             </responsiveSteps>
-            <textField id="nameField" property="name"/>
+            <textField id="nameField" property="name" />
             <textField id="totalStudentField" property="totalStudent" readOnly="true"/>
-            <entityPicker id="schoolField" property="school">
-                <actions>
-                    <action id="entityLookup" type="entity_lookup"/>
-                    <action id="entityClear" type="entity_clear"/>
-                </actions>
-            </entityPicker>
+            <entityComboBox id="schoolField" property="school" itemsContainer="departmentsDc"/>
         </formLayout>
         <hbox id="detailActions">
-            <button id="saveAndCloseButton" action="saveAction"/>
+            <button id="saveAndCloseButton" text="Save" icon="vaadin:check-circle"/>
             <button id="closeButton" action="closeAction"/>
         </hbox>
         <hbox spacing="true" width="100%">
-            <vbox spacing="true" width="70%">
+            <vbox spacing="true">
                 <hbox>
-                    <textField value="Lecturers" readOnly="true"/>
+                    <h2 text="Lecturers"/>
                     <button id="createLecturerButton" text="Add Lecturer" icon="vaadin:plus"/>
+<!--                    <multiSelectComboBoxPicker id="multiSelectComboBoxPickerLecturers" placeholder="Choose lecturers" itemsContainer="lecturersPickerDc"-->
+<!--                                               metaClass="Lecturer">-->
+<!--                    </multiSelectComboBoxPicker>-->
+<!--                    <valuePicker id="lecturersPicker" dataContainer="lecturersPickerDc">-->
+<!--                        <actions>-->
+<!--                            <action id="entity_lookup" type="entity_lookup"/>-->
+<!--                            <action id="entity_clear" type="entity_clear"/>-->
+<!--                        </actions>-->
+<!--                    </valuePicker>-->
                 </hbox>
                 <dataGrid id="lecturerDataGrid" dataContainer="lecturersDc">
+                    <actions>
+                        <action id="edit" type="list_edit"/>
+                        <action id="remove" type="list_remove"/>
+                    </actions>
                     <columns>
-                        <column property="lecturer.name"/>
-                        <column property="lecturer.major"/>
+                        <column property="name"/>
+                        <column property="major"/>
                     </columns>
                 </dataGrid>
             </vbox>
 
-            <vbox spacing="true" width="30%">
+            <vbox spacing="true" >
                 <hbox>
-                    <textField value="Students" readOnly="true"/>
+                    <h2 text="Students"/>
                     <button id="createStudentButton" text="Add Student" icon="vaadin:plus"/>
+                    <multiSelectComboBoxPicker id="multiSelectComboBoxPickerStudents" placeholder="Choose students" itemsContainer="studentsPickerDc"
+                                               metaClass="Student">
+                        <actions>
+                            <action id="entity_lookup" type="entity_lookup"/>
+                            <action id="entity_clear" type="entity_clear"/>
+                        </actions>
+                    </multiSelectComboBoxPicker>
                 </hbox>
                 <dataGrid id="studentDataGrid" dataContainer="studentsDc">
+                    <actions>
+                        <action id="edit" type="list_edit"/>
+                        <action id="remove" type="list_remove"/>
+                    </actions>
                     <columns>
                         <column property="name"/>
                     </columns>

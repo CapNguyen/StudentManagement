@@ -3,6 +3,14 @@
       title="msg://lecturerDetailView.title"
       focusComponent="form">
     <data>
+        <collection id="majorsDc" class="com.company.studentmanagement.entity.Major">
+            <loader id="majorsDl" readOnly="true">
+                <query>
+                    <![CDATA[select e from Major e]]>
+                </query>
+            </loader>
+            <fetchPlan extends="_base"/>
+        </collection>
         <instance id="lecturerDc"
                   class="com.company.studentmanagement.entity.Lecturer">
             <fetchPlan extends="_base">
@@ -45,30 +53,25 @@
                 <responsiveStep minWidth="40em" columns="2"/>
             </responsiveSteps>
             <textField id="nameField" property="name"/>
-            <entityPicker id="subjectField" property="major">
-                <actions>
-                    <action id="entityLookup" type="entity_lookup"/>
-                    <action id="entityClear" type="entity_clear"/>
-                </actions>
-            </entityPicker>
+            <entityComboBox id="subjectField" property="major" itemsContainer="majorsDc"/>
             <datePicker id="dobField" property="dob"/>
             <textField id="phoneField" property="phone"/>
             <textField id="addressField" property="address"/>
         </formLayout>
-        <hbox id="buttonsPanel" classNames="buttons-panel">
-            <button id="generateButton" text="Generate"/>
-            <multiSelectComboBox id="classField" itemsContainer="klassesDc"/>
-        </hbox>
-        <dataGrid id="lecturerClassDataGrid" dataContainer="lecturerClassesDc">
-            <columns>
-                <column property="lecturer.name" filterable="true"/>
-                <column property="lecturer.major" filterable="true"/>
-                <column property="klass.name" filterable="true"/>
-            </columns>
-            <actions>
-                <action id="remove" type="list_remove"/>
-            </actions>
-        </dataGrid>
+<!--        <hbox id="buttonsPanel" classNames="buttons-panel">-->
+<!--            <button id="generateButton" text="Generate"/>-->
+<!--            <multiSelectComboBox id="classField" itemsContainer="klassesDc"/>-->
+<!--        </hbox>-->
+<!--        <dataGrid id="lecturerClassDataGrid" dataContainer="lecturerClassesDc">-->
+<!--            <columns>-->
+<!--                <column property="lecturer.name" filterable="true"/>-->
+<!--                <column property="lecturer.major" filterable="true"/>-->
+<!--                <column property="klass.name" filterable="true"/>-->
+<!--            </columns>-->
+<!--            <actions>-->
+<!--                <action id="remove" type="list_remove"/>-->
+<!--            </actions>-->
+<!--        </dataGrid>-->
         <hbox id="detailActions">
             <button id="saveAndCloseButton" action="saveAction"/>
             <button id="closeButton" action="closeAction"/>

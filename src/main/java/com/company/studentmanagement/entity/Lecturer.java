@@ -1,12 +1,15 @@
 package com.company.studentmanagement.entity;
 
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
+import io.jmix.core.metamodel.annotation.Composition;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @JmixEntity
@@ -38,6 +41,17 @@ public class Lecturer {
     private String phone;
     @Column(name = "ADDRESS")
     private String address;
+    @Composition
+    @OneToMany(mappedBy = "lecturer")
+    private List<LecturerClass> lecturerClasses;
+
+    public List<LecturerClass> getLecturerClasses() {
+        return lecturerClasses;
+    }
+
+    public void setLecturerClasses(List<LecturerClass> lecturerClasses) {
+        this.lecturerClasses = lecturerClasses;
+    }
 
     public Major getMajor() {
         return major;
@@ -93,5 +107,28 @@ public class Lecturer {
 
     public void setId(UUID id) {
         this.id = id;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Lecturer lecturer = (Lecturer) o;
+        return Objects.equals(getId(), lecturer.getId())
+                && Objects.equals(getName(), lecturer.getName())
+                && Objects.equals(getMajor(), lecturer.getMajor())
+                && Objects.equals(getDob(), lecturer.getDob())
+                && Objects.equals(getPhone(), lecturer.getPhone())
+                && Objects.equals(getAddress(), lecturer.getAddress());
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hashCode(getName());
+        result = 31 * result + Objects.hashCode(getMajor());
+        result = 31 * result + Objects.hashCode(getDob());
+        result = 31 * result + Objects.hashCode(getPhone());
+        result = 31 * result + Objects.hashCode(getAddress());
+        return result;
     }
 }

@@ -1,9 +1,11 @@
 package com.company.studentmanagement.entity;
 
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
+import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import jakarta.persistence.*;
 
+import java.util.Objects;
 import java.util.UUID;
 
 @JmixEntity
@@ -21,10 +23,10 @@ public class LecturerClass {
     @Version
     private Integer version;
     @JoinColumn(name = "LECTURER_ID")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
     private Lecturer lecturer;
     @JoinColumn(name = "KLASS_ID")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
     private Klass klass;
 
     public Klass getKlass() {
@@ -57,5 +59,19 @@ public class LecturerClass {
 
     public void setId(UUID id) {
         this.id = id;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        LecturerClass that = (LecturerClass) o;
+        return Objects.equals(lecturer.getId(), that.lecturer.getId())
+                && Objects.equals(klass.getId(), that.klass.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getVersion(), getLecturer(), getKlass());
     }
 }

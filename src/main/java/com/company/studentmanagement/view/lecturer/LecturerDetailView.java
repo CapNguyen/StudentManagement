@@ -39,26 +39,26 @@ public class LecturerDetailView extends StandardDetailView<Lecturer> {
         lecturerClassesDl.load();
 
     }
-
-    @Subscribe(id = "generateButton", subject = "clickListener")
-    public void onGenerateButtonClick(final ClickEvent<JmixButton> event) {
-        Lecturer editingLecturer = getEditedEntity();
-        Set<Klass> klassSet = classField.getSelectedItems();
-        List<Klass> classes = dataManager.load(Klass.class)
-                .query("SELECT DISTINCT c FROM Klass c JOIN LecturerClass lc ON c.id = lc.klass.id WHERE lc.lecturer.id = :lecturerId")
-                .parameter("lecturerId", editingLecturer.getId())
-                .list();
-
-        if(!klassSet.isEmpty()){
-            for(Klass c : klassSet){
-                if(classes.contains(c)) continue;
-                LecturerClass lc = dataContext.create(LecturerClass.class);
-                lc.setLecturer(editingLecturer);
-                lc.setKlass(c);
-                dataContext.merge(lc);
-            }
-            dataContext.save();
-            lecturerClassesDl.load();
-        }
-    }
+//
+//    @Subscribe(id = "generateButton", subject = "clickListener")
+//    public void onGenerateButtonClick(final ClickEvent<JmixButton> event) {
+//        Lecturer editingLecturer = getEditedEntity();
+//        Set<Klass> klassSet = classField.getSelectedItems();
+//        List<Klass> classes = dataManager.load(Klass.class)
+//                .query("SELECT DISTINCT c FROM Klass c JOIN LecturerClass lc ON c.id = lc.klass.id WHERE lc.lecturer.id = :lecturerId")
+//                .parameter("lecturerId", editingLecturer.getId())
+//                .list();
+//
+//        if(!klassSet.isEmpty()){
+//            for(Klass c : klassSet){
+//                if(classes.contains(c)) continue;
+//                LecturerClass lc = dataContext.create(LecturerClass.class);
+//                lc.setLecturer(editingLecturer);
+//                lc.setKlass(c);
+//                dataContext.merge(lc);
+//            }
+//            dataContext.save();
+//            lecturerClassesDl.load();
+//        }
+//    }
 }

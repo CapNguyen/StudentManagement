@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
+import java.util.Objects;
 import java.util.UUID;
 
 @JmixEntity
@@ -36,9 +37,9 @@ public class Student {
     private String phone;
     @Column(name = "ADDRESS")
     private String address;
-    @NotNull
-    @JoinColumn(name = "IN_CLASS_ID", nullable = false)
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+
+    @JoinColumn(name = "IN_CLASS_ID")
+    @ManyToOne(fetch = FetchType.LAZY)
     private Klass inClass;
 
     public Klass getInClass() {
@@ -103,5 +104,26 @@ public class Student {
 
     public void setId(UUID id) {
         this.id = id;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Student student = (Student) o;
+        return Objects.equals(getId(), student.getId()) && Objects.equals(getVersion(), student.getVersion()) && Objects.equals(getCode(), student.getCode()) && Objects.equals(getName(), student.getName()) && Objects.equals(getDob(), student.getDob()) && Objects.equals(getPhone(), student.getPhone()) && Objects.equals(getAddress(), student.getAddress()) && Objects.equals(getInClass(), student.getInClass());
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hashCode(getId());
+        result = 31 * result + Objects.hashCode(getVersion());
+        result = 31 * result + Objects.hashCode(getCode());
+        result = 31 * result + Objects.hashCode(getName());
+        result = 31 * result + Objects.hashCode(getDob());
+        result = 31 * result + Objects.hashCode(getPhone());
+        result = 31 * result + Objects.hashCode(getAddress());
+        result = 31 * result + Objects.hashCode(getInClass());
+        return result;
     }
 }

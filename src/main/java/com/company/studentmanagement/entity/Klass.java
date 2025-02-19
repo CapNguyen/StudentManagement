@@ -1,17 +1,19 @@
 package com.company.studentmanagement.entity;
 
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
+import io.jmix.core.metamodel.annotation.Composition;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
+import java.util.List;
 import java.util.UUID;
 
 @JmixEntity
 @Table(name = "KLASS", indexes = {
-        @Index(name = "IDX_CLASS_SCHOOL", columnList = "SCHOOL_ID")
+        @Index(name = "IDX_CLASS_SCHOOL", columnList = "SCHOOL_ID"),
+        @Index(name = "IDX_KLASS_UNQ", columnList = "ID", unique = true)
 })
 @Entity
 public class Klass {
@@ -27,11 +29,22 @@ public class Klass {
     @Column(name = "NAME", nullable = false)
     private String name;
     @Column(name = "TOTAL_STUDENT")
-    private Integer totalStudent=0;
+    private Integer totalStudent = 0;
     @NotNull
     @JoinColumn(name = "SCHOOL_ID", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private Department school;
+    @Composition
+    @OneToMany(mappedBy = "klass")
+    private List<LecturerClass> lecturerClasses;
+
+    public List<LecturerClass> getLecturerClasses() {
+        return lecturerClasses;
+    }
+
+    public void setLecturerClasses(List<LecturerClass> lecturerClasses) {
+        this.lecturerClasses = lecturerClasses;
+    }
 
     public void setTotalStudent(Integer totalStudent) {
         this.totalStudent = totalStudent;
