@@ -15,6 +15,7 @@ import io.jmix.flowui.Notifications;
 import io.jmix.flowui.action.DialogAction;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker;
+import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.model.CollectionContainer;
@@ -23,10 +24,7 @@ import io.jmix.flowui.model.DataContext;
 import io.jmix.flowui.view.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Route(value = "klasses/:id", layout = MainView.class)
 @ViewController(id = "Klass.detail")
@@ -61,25 +59,73 @@ public class KlassDetailView extends StandardDetailView<Klass> {
     private Dialogs dialogs;
     @ViewComponent
     private JmixMultiSelectComboBoxPicker<Lecturer> multiSelectComboBoxPickerLecturers;
+    @ViewComponent
+    private TypedTextField<Integer> totalStudentField;
+    private Set<Lecturer> previousLecturersSelection = new HashSet<>();
+    private Set<Student> previousStudentsSelection = new HashSet<>();
+    @ViewComponent
+    private CollectionLoader<Lecturer> lecturersPickerDl;
+    @ViewComponent
+    private CollectionLoader<Student> studentsPickerDl;
+    @ViewComponent
+    private JmixMultiSelectComboBoxPicker<Student> multiSelectComboBoxPickerStudents;
+
 
     @Subscribe
-    public void onInit(final InitEvent event) {
-
-//        multiSelectComboBoxPickerLecturers.addValueChangeListener(e -> {
-//            Set<Lecturer> selectedLecture = e.getValue();
-//            selectedLecture.forEach(l -> {
-//                lecturersDl.load();
-//                lecturersDc.getMutableItems().addAll(selectedLecture);
-//            });
-//        });
+    public void onInit(InitEvent event) {
+        bindLecturersPickerEvent();
+        bindStudentsPickerEvent();
     }
+
+    private void bindLecturersPickerEvent() {
+        lecturersPickerDl.load();
+
+        multiSelectComboBoxPickerLecturers
+                .addValueChangeListener(e -> {
+                    Set<Lecturer> currentSelection = e.getValue() != null ? e.getValue() : new HashSet<>();
+                    for (Lecturer lecturer : currentSelection) {
+                        if (!previousLecturersSelection.contains(lecturer)) {
+                            lecturersDc.getMutableItems().add(lecturer);
+                        }
+                    }
+                    previousLecturersSelection.stream()
+                            .filter(lecturer -> !currentSelection.contains(lecturer))
+                            .forEach(lecturersDc.getMutableItems()::remove);
+
+                    previousLecturersSelection = new HashSet<>(currentSelection);
+                });
+
+        lecturersPickerDl.load();
+    }
+
+    private void bindStudentsPickerEvent() {
+        studentsPickerDl.load();
+
+        multiSelectComboBoxPickerStudents
+                .addValueChangeListener(e -> {
+                    Set<Student> currentSelection = e.getValue() != null ? e.getValue() : new HashSet<>();
+                    for (Student student : currentSelection) {
+                        if (!previousStudentsSelection.contains(student)) {
+                            studentsDc.getMutableItems().add(student);
+                        }
+                    }
+                    previousStudentsSelection.stream()
+                            .filter(student -> !currentSelection.contains(student))
+                            .forEach(studentsDc.getMutableItems()::remove);
+
+                    previousStudentsSelection = new HashSet<>(currentSelection);
+                });
+
+        studentsPickerDl.load();
+    }
+
 
     @Subscribe
     public void onBeforeShow(final BeforeShowEvent event) {
-        var classEditing = getEditedEntity();
-        lecturersDl.setParameter("classId", classEditing.getId());
+        var classEditing = getEditedEntity().getId();
+        lecturersDl.setParameter("classId", classEditing);
         lecturersDl.load();
-        studentsDl.setParameter("classId", classEditing.getId());
+        studentsDl.setParameter("classId", classEditing);
         studentsDl.load();
     }
 
@@ -87,7 +133,7 @@ public class KlassDetailView extends StandardDetailView<Klass> {
     public void onSaveAndCloseButtonClick(final ClickEvent<JmixButton> event) {
         var classes = dataManager.load(Klass.class).all().list()
                 .stream()
-                .map(c -> c.getId())
+                .map(Klass::getId)
                 .toList();
         var isEditing = classes.contains(this.getEditedEntity().getId());
         if (isEditing) {
@@ -99,8 +145,8 @@ public class KlassDetailView extends StandardDetailView<Klass> {
                                     .withHandler(e -> {
                                         var nonDuplicatedLecturerList = lecturersDc.getItems().stream().distinct().toList();
                                         var nonDuplicatedStudentList = studentsDc.getItems().stream().distinct().toList();
-                                        UpdateLecturers(nonDuplicatedLecturerList, getEditedEntity());
-                                        UpdateStudents(nonDuplicatedStudentList, getEditedEntity());
+                                        updateLecturers(nonDuplicatedLecturerList, getEditedEntity());
+                                        updateStudents(nonDuplicatedStudentList, getEditedEntity());
                                         notifications.create("Update Successfully")
                                                 .withType(Notifications.Type.SUCCESS)
                                                 .withPosition(Notification.Position.TOP_END)
@@ -116,8 +162,7 @@ public class KlassDetailView extends StandardDetailView<Klass> {
             var school = getEditedEntity().getSchool();
             var lecturers = lecturersDc.getMutableItems().stream().distinct().toList();
             var students = studentsDc.getMutableItems().stream().distinct().toList();
-            var totalStudents = students.size();
-            createClass(name, totalStudents, school, lecturers, students);
+            createClass(name, school, lecturers, students);
             notifications.create("Create Successfully")
                     .withType(Notifications.Type.SUCCESS)
                     .withPosition(Notification.Position.TOP_END)
@@ -126,11 +171,10 @@ public class KlassDetailView extends StandardDetailView<Klass> {
         }
     }
 
-    public void createClass(String name, Integer totalStudent, Department school,
+    public void createClass(String name, Department school,
                             List<Lecturer> lecturers, List<Student> students) {
         Klass newClass = dataManager.create(Klass.class);
         newClass.setName(name);
-        newClass.setTotalStudent(totalStudent);
         newClass.setSchool(school);
         dataManager.save(newClass);
 
@@ -147,25 +191,25 @@ public class KlassDetailView extends StandardDetailView<Klass> {
             s.setInClass(newClass);
             dataManager.save(s);
         });
-
+        newClass.setStudents(students);
         dataManager.save(newClass);
     }
 
 
-    private void UpdateStudents(List<Student> studentList, Klass currentClass) {
+    private void updateStudents(List<Student> studentList, Klass currentClass) {
         var dbStudentList = dataManager.load(Student.class)
                 .query("Select s from Student s Join Fetch Klass where s.inClass=:currentClass")
                 .parameter("currentClass", currentClass)
                 .list();
 
-        var dbStudentsId = dbStudentList.stream().map(s -> s.getId()).toList();
+        var dbStudentsId = dbStudentList.stream().map(Student::getId).toList();
         //Get added Students
         var addStudents = studentList.stream()
                 .filter(s -> !dbStudentsId.contains(s.getId()))
                 .toList();
         //Get removed Students
         var removedStudents = dbStudentList.stream()
-                .filter(s -> !(studentList.stream().map(st -> st.getId()).toList()).contains(s.getId()))
+                .filter(s -> !(studentList.stream().map(Student::getId).toList()).contains(s.getId()))
                 .toList();
         //Get updated students
         var updatedStudents = studentList.stream()
@@ -183,13 +227,14 @@ public class KlassDetailView extends StandardDetailView<Klass> {
         });
         updatedStudents.forEach(dataManager::save);
         removedStudents.forEach(s -> {
-            dataManager.remove(s);
+            s.setInClass(null);
+            dataManager.save(s);
             currentClass.setTotalStudent(currentClass.getTotalStudent() - 1);
             dataManager.save(currentClass);
         });
     }
 
-    private void UpdateLecturers(List<Lecturer> lecturerList, Klass currentClass) {
+    private void updateLecturers(List<Lecturer> lecturerList, Klass currentClass) {
         //Get In-DB Lecturers
         var dbLecturers = dataManager.load(Lecturer.class)
                 .query("Select l from Lecturer l " +
@@ -197,19 +242,19 @@ public class KlassDetailView extends StandardDetailView<Klass> {
                         "where lc.klass.id= :classId")
                 .parameter("classId", currentClass.getId())
                 .list();
-        var dbLecturersId = dbLecturers.stream().map(l -> l.getId()).toList();
+        var dbLecturersId = dbLecturers.stream().map(Lecturer::getId).toList();
 
         var addedLecturers = lecturerList.stream()
                 .filter(newLec ->
                         !(dbLecturers.stream()
-                                .map(l -> l.getId())
+                                .map(Lecturer::getId)
                                 .toList())
                                 .contains(newLec.getId()))
                 .toList();
         var removedLecturers = dbLecturers.stream()
                 .filter(oldLec ->
                         !(lecturerList.stream()
-                                .map(l -> l.getId())
+                                .map(Lecturer::getId)
                                 .toList())
                                 .contains(oldLec.getId()))
                 .toList();
@@ -236,7 +281,8 @@ public class KlassDetailView extends StandardDetailView<Klass> {
                     .parameter("lecId", l.getId())
                     .list();
             lecturerClasses.forEach(dataManager::remove);
-            dataManager.remove(l);
+            l.setLecturerClasses(null);
+            dataManager.save(l);
         });
     }
 
@@ -383,6 +429,7 @@ public class KlassDetailView extends StandardDetailView<Klass> {
                         new DialogAction(DialogAction.Type.NO))
                 .open();
     }
+
 }
 
 

@@ -6,7 +6,8 @@
         <collection id="studentsPickerDc" class="com.company.studentmanagement.entity.Student">
             <loader id="studentsPickerDl" readOnly="true">
                 <query>
-                    <![CDATA[select e from Student e]]>
+                    <![CDATA[select e from Student e
+                    order by e.name asc]]>
                 </query>
             </loader>
             <fetchPlan extends="_base"/>
@@ -14,11 +15,19 @@
         <collection id="lecturersPickerDc" class="com.company.studentmanagement.entity.Lecturer">
             <fetchPlan extends="_base">
                 <property fetchPlan="_base" name="major"/>
-                <property name="lecturerClasses" fetchPlan="_base"/>
+                <property fetchPlan="_base" name="lecturerClasses">
+                    <property fetchPlan="_base" name="klass">
+                        <property name="school" fetchPlan="_base"/>
+                    </property>
+                    <property name="lecturer" fetchPlan="_base">
+                        <property name="major" fetchPlan="_base"/>
+                    </property>
+                </property>
             </fetchPlan>
             <loader id="lecturersPickerDl" readOnly="true">
                 <query>
-                    <![CDATA[select e from Lecturer e]]>
+                    <![CDATA[select l from Lecturer l
+                    order by l.name asc]]>
                 </query>
             </loader>
         </collection>
@@ -34,7 +43,7 @@
             <loader id="studentsDl" readOnly="true">
                 <query>
                     <![CDATA[select e from Student e
-                    where e.inClass.id = :classId  ]]>
+                    where e.inClass.id = :classId]]>
                 </query>
             </loader>
             <fetchPlan extends="_base"/>
@@ -70,7 +79,7 @@
                 <responsiveStep minWidth="0" columns="1"/>
                 <responsiveStep minWidth="40em" columns="2"/>
             </responsiveSteps>
-            <textField id="nameField" property="name" />
+            <textField id="nameField" property="name"/>
             <textField id="totalStudentField" property="totalStudent" readOnly="true"/>
             <entityComboBox id="schoolField" property="school" itemsContainer="departmentsDc"/>
         </formLayout>
@@ -83,15 +92,15 @@
                 <hbox>
                     <h2 text="Lecturers"/>
                     <button id="createLecturerButton" text="Add Lecturer" icon="vaadin:plus"/>
-<!--                    <multiSelectComboBoxPicker id="multiSelectComboBoxPickerLecturers" placeholder="Choose lecturers" itemsContainer="lecturersPickerDc"-->
-<!--                                               metaClass="Lecturer">-->
-<!--                    </multiSelectComboBoxPicker>-->
-<!--                    <valuePicker id="lecturersPicker" dataContainer="lecturersPickerDc">-->
-<!--                        <actions>-->
-<!--                            <action id="entity_lookup" type="entity_lookup"/>-->
-<!--                            <action id="entity_clear" type="entity_clear"/>-->
-<!--                        </actions>-->
-<!--                    </valuePicker>-->
+                    <multiSelectComboBoxPicker id="multiSelectComboBoxPickerLecturers" placeholder="Choose lecturers"
+                                               itemsContainer="lecturersPickerDc"
+                                               metaClass="Lecturer">
+                        <actions>
+                            <action id="entity_lookup" type="entity_lookup"/>
+                            <action id="entity_clear" type="entity_clear"/>
+                        </actions>
+                    </multiSelectComboBoxPicker>
+
                 </hbox>
                 <dataGrid id="lecturerDataGrid" dataContainer="lecturersDc">
                     <actions>
@@ -105,11 +114,12 @@
                 </dataGrid>
             </vbox>
 
-            <vbox spacing="true" >
+            <vbox spacing="true">
                 <hbox>
                     <h2 text="Students"/>
                     <button id="createStudentButton" text="Add Student" icon="vaadin:plus"/>
-                    <multiSelectComboBoxPicker id="multiSelectComboBoxPickerStudents" placeholder="Choose students" itemsContainer="studentsPickerDc"
+                    <multiSelectComboBoxPicker id="multiSelectComboBoxPickerStudents" placeholder="Choose students"
+                                               itemsContainer="studentsPickerDc"
                                                metaClass="Student">
                         <actions>
                             <action id="entity_lookup" type="entity_lookup"/>
@@ -123,6 +133,7 @@
                         <action id="remove" type="list_remove"/>
                     </actions>
                     <columns>
+                        <column property="code"/>
                         <column property="name"/>
                     </columns>
                 </dataGrid>
