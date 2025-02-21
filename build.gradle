@@ -42,6 +42,7 @@ dependencies {
     }
     testImplementation 'io.jmix.flowui:jmix-flowui-test-assist'
     implementation 'com.mysql:mysql-connector-j'
+    implementation 'io.jmix.gridexport:jmix-gridexport-flowui-starter'
 }
 
 configurations.implementation {
